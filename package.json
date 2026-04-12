@@ -1,0 +1,79 @@
+{
+  "name": "@codeperfect/commitlint-config-emoji",
+  "version": "0.0.0",
+  "description": "Emoji-required conventional commitlint shareable config.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "\n# --------------- SCM --------------- #": "",
+    "commit": "npx --yes git-cz",
+    "prepare": "husky",
+    "\n# --------------- BUILDING --------------- #": "",
+    "build": "npm run clean && npm run compile",
+    "clean": "npx --yes rimraf dist",
+    "compile": "tsc -b -f ./tsconfig.build.json",
+    "pack": "npm pack --pack-destination dist",
+    "resolve-paths": "tsc-alias --project ./tsconfig.build.json --resolve-full-paths",
+    "\n# --------------- LINTING --------------- #": "",
+    "\t• --------------- checking --------------- •": "",
+    "lint": "npm run lint:run",
+    "lint:run": "npm run prettier",
+    "lint:staged": "npx --yes tsx scripts/lint-staged.ts",
+    "prettier": "npx --yes prettier --ignore-unknown --check .",
+    "\n\t• --------------- fixing --------------- •": "",
+    "lint:fix": "npm run prettier:write",
+    "prettier:write": "npm run prettier -- --write",
+    "\n# --------------- TESTING --------------- #": "",
+    "typecheck": "tsc --noEmit",
+    "typecheck:spec": "tsc -p tsconfig.spec.json --noEmit",
+    "validate": "npm run lint && npm run typecheck && npm run typecheck:spec && npm run test && npm run build && npm run pack",
+    "pretest": "npm run build",
+    "\n\t• --------------- unit --------------- •": "",
+    "e2e": "npx --yes vitest run --config vitest.config.e2e.ts --coverage.enabled=false",
+    "tdd:notify": "npm run tdd -- --notify",
+    "tdd": "npx --yes vitest run --watch --silent=true --coverage.enabled=false",
+    "test": "npm run unit && npm run e2e",
+    "unit": "npx --yes vitest run"
+  },
+  "keywords": [
+    "commitlint",
+    "conventional-commits",
+    "emoji"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parloti/commitlint-config-emoji.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@commitlint/types": "^20.5.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/cz-commitlint": "^20.5.1",
+    "@commitlint/lint": "^20.5.0",
+    "@commitlint/load": "^20.5.0",
+    "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.4",
+    "chalk": "^5.6.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "semantic-release": "^25.0.3",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^6.0.2",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.4"
+  }
+}

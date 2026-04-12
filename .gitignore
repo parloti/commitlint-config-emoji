@@ -1,0 +1,9 @@
+coverage/
+dist/
+node_modules/
+*.tsbuildinfo
+validate-run*.txt
+lint-run*.txt
+eslint-run*.txt
+typecheck-run*.txt
+test-run*.txt
