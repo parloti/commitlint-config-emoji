@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import releaseConfig from "../release.config";
 import config from "./config";
 
 describe("commitlint config", () => {
@@ -28,5 +29,23 @@ describe("commitlint config", () => {
     expect(config.prompt?.questions?.type).toMatchObject({
       emojiInHeader: true,
     });
+  });
+
+  it("reuses the commitlint parser preset for release plugins", () => {
+    // Arrange
+    const parserPreset = config.parserPreset;
+
+    // Act
+    const actualPlugins = releaseConfig.plugins;
+
+    // Assert
+    expect(actualPlugins).toContainEqual([
+      "@semantic-release/commit-analyzer",
+      parserPreset,
+    ]);
+    expect(actualPlugins).toContainEqual([
+      "@semantic-release/release-notes-generator",
+      parserPreset,
+    ]);
   });
 });

@@ -1,11 +1,8 @@
 import type { Options } from "semantic-release";
 
-import config from "./dist";
+import config from "./src";
 
-/**
- * Semantic-release loads this file before build output exists, so the parser
- * behavior is intentionally duplicated here instead of importing from src/.
- */
+/** Semantic-release loads this file before build output exists. */
 const releaseConfig = {
   branches: ["main"],
   plugins: [
