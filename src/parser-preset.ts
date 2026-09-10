@@ -3,12 +3,24 @@ import type { ParserPreset } from "@commitlint/types";
 import {
   conventionalTypeEnum,
   type PromptTypeEnum,
-} from "./conventional-config.js";
+} from "./conventional-config";
 
-type ParserOptions = NonNullable<ParserPreset["parserOpts"]>;
+interface CreateParserOptions {
+  issuePrefixes?: string[];
+}
+
+interface ParserOptions {
+  breakingHeaderPattern: RegExp;
+  headerCorrespondence: string[];
+  headerPattern: RegExp;
+  issuePrefixes: string[];
+  noteKeywords: string[];
+  revertCorrespondence: string[];
+  revertPattern: RegExp;
+}
 
 const escapeForRegex = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  value.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 
 const buildEmojiAlternation = (): string =>
   Object.values(conventionalTypeEnum)
@@ -27,17 +39,15 @@ const createBreakingHeaderPattern = (): RegExp =>
     "u",
   );
 
-const createParserOptions = (config?: {
-  issuePrefixes?: string[];
-}): ParserOptions => ({
+const createParserOptions = (config?: CreateParserOptions): ParserOptions => ({
   breakingHeaderPattern: createBreakingHeaderPattern(),
   headerCorrespondence: ["emoji", "type", "scope", "subject"],
   headerPattern: createHeaderPattern(),
+  issuePrefixes: config?.issuePrefixes ?? ["#"],
   noteKeywords: ["BREAKING CHANGE", "BREAKING-CHANGE"],
+  revertCorrespondence: ["header", "hash"],
   revertPattern:
     /^(?:Revert|revert:)\s"?([\s\S]+?)"?\s*This reverts commit (\w*)\./i,
-  revertCorrespondence: ["header", "hash"],
-  issuePrefixes: config?.issuePrefixes ?? ["#"],
 });
 
 export const createEmojiParserPreset = (): ParserPreset => ({

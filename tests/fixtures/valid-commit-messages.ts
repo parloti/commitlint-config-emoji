@@ -1,8 +1,8 @@
-export type ValidCommitMessageCase = {
+export interface ValidCommitMessageCase {
   readonly expectedHeaderLength?: number;
   readonly message: string;
   readonly name: string;
-};
+}
 
 const createHeaderWithLength = (
   prefix: string,

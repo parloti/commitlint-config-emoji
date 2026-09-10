@@ -1,17 +1,17 @@
-export type RejectedCommitMessageCase = {
+export interface RejectedCommitMessageCase {
   readonly exactErrorNames?: boolean;
   readonly expectedErrorNames: readonly string[];
   readonly expectedHeaderLength?: number;
   readonly message: string;
   readonly name: string;
-};
+}
 
-export type WarningCommitMessageCase = {
+export interface WarningCommitMessageCase {
   readonly exactWarningNames?: boolean;
   readonly expectedWarningNames: readonly string[];
   readonly message: string;
   readonly name: string;
-};
+}
 
 const createHeaderWithLength = (
   prefix: string,

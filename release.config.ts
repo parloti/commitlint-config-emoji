@@ -1,5 +1,6 @@
 import type { Options } from "semantic-release";
-import config from "./dist/index.js";
+
+import config from "./dist";
 
 /**
  * Semantic-release loads this file before build output exists, so the parser

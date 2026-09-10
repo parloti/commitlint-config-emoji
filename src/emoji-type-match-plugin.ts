@@ -1,6 +1,6 @@
 import type { Plugin, RuleConfigCondition, SyncRule } from "@commitlint/types";
 
-import { conventionalTypeEnum } from "./conventional-config.js";
+import { conventionalTypeEnum } from "./conventional-config";
 
 const expectedEmojiByType = Object.fromEntries(
   Object.entries(conventionalTypeEnum).map(([type, definition]) => [
@@ -16,12 +16,12 @@ const createRuleMessage = (
 ): string =>
   `emoji "${actualEmoji}" must match type "${type}" using "${expectedEmoji}"`;
 
-export const emojiTypeMatchRule: SyncRule = (
+const emojiTypeMatchRule: SyncRule = (
   parsed,
   when: RuleConfigCondition = "always",
 ) => {
-  const emoji = (parsed as { emoji?: string | null }).emoji;
-  const type = (parsed as { type?: string | null }).type;
+  const emoji = (parsed as { emoji?: null | string }).emoji;
+  const type = (parsed as { type?: null | string }).type;
 
   if (!emoji || !type) {
     return [true];

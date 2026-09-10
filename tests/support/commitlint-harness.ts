@@ -1,9 +1,7 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
 import lint from "@commitlint/lint";
 import load from "@commitlint/load";
-import type { ParserPreset } from "@commitlint/types";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,7 +15,7 @@ export const loadPackageConfig = async () =>
 
 export const lintCommitMessage = async (message: string) => {
   const loadedConfig = await loadPackageConfig();
-  const parserPreset = loadedConfig.parserPreset as ParserPreset | undefined;
+  const parserPreset = loadedConfig.parserPreset;
 
   return lint(message, loadedConfig.rules, {
     defaultIgnores: false,

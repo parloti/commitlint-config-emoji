@@ -1,5 +1,10 @@
 import type { Configuration } from "lint-staged";
 
-const prettierWriteCommand = "npx --yes prettier --ignore-unknown --write";
-
-export default { "*": prettierWriteCommand } satisfies Configuration;
+export default {
+  "!*.{css,scss,sass,htm,html,js,ts}":
+    "npx --yes prettier --ignore-unknown --write",
+  "*.{htm,html,js,ts}": [
+    "npx --yes prettier --ignore-unknown --write",
+    "npx --yes eslint --no-warn-ignored --fix",
+  ],
+} satisfies Configuration;

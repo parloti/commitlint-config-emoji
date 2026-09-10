@@ -1,12 +1,12 @@
 import type { UserConfig } from "@commitlint/types";
 
-export type PromptTypeDefinition = {
+export type PromptTypeEnum = Record<string, PromptTypeDefinition>;
+
+interface PromptTypeDefinition {
   description: string;
   emoji: string;
   title: string;
-};
-
-export type PromptTypeEnum = Record<string, PromptTypeDefinition>;
+}
 
 export const conventionalTypeEnum = {
   build: {

@@ -2,78 +2,98 @@
   "name": "@codeperfect/commitlint-config-emoji",
   "version": "0.0.0",
   "description": "Emoji-required conventional commitlint shareable config.",
+  "license": "MIT",
+  "repository": "github:parloti/commitlint-config-emoji",
+  "author": "Alex Parloti",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=24"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "\n# --------------- SCM --------------- #": "",
+    "\n# ---------------- GENERAL  ---------------- #": "",
+    "prepare": "patch-package && husky",
+    "\n# ------------------ SCM  ------------------ #": "",
     "commit": "npx --yes git-cz",
-    "prepare": "husky",
-    "\n# --------------- BUILDING --------------- #": "",
-    "build": "npm run clean && npm run compile",
+    "\n# ---------------- BUILDING ---------------- #": "",
+    "build": "npm run clean && npm run compile && npm run resolve-paths",
     "clean": "npx --yes rimraf dist",
-    "compile": "tsc -b -f ./tsconfig.build.json",
+    "\n    • ---------- compilation  ---------- •": "",
     "pack": "npm pack --pack-destination dist",
-    "resolve-paths": "tsc-alias --project ./tsconfig.build.json --resolve-full-paths",
-    "\n# --------------- LINTING --------------- #": "",
-    "\t• --------------- checking --------------- •": "",
+    "compile": "tsc --build --force ./tsconfig.build.json",
+    "resolve-paths": "npx --yes tsc-alias --project ./tsconfig.build.json --resolve-full-paths",
+    "\n# ---------------- LINTING  ---------------- #": "",
+    "\n    • ------------ checking ------------ •": "",
+    "eslint": "npx --yes eslint --max-warnings=0",
     "lint": "npm run lint:run",
-    "lint:run": "npm run prettier",
-    "lint:staged": "npx --yes tsx scripts/lint-staged.ts",
+    "lint:run": "npm run prettier && npm run eslint",
     "prettier": "npx --yes prettier --ignore-unknown --check .",
-    "\n\t• --------------- fixing --------------- •": "",
-    "lint:fix": "npm run prettier:write",
-    "prettier:write": "npm run prettier -- --write",
-    "\n# --------------- TESTING --------------- #": "",
+    "\n    • ------------- fixing ------------- •": "",
+    "eslint:fix": "npm run check:rules && npm run eslint -- --fix",
+    "lint:fix": "npm run fmt && npm run eslint:fix",
+    "lint:staged": "npx --yes tsx scripts/lint-staged.ts",
+    "fmt": "npm run prettier -- --write",
+    "\n    • ------------ helpers  ------------ •": "",
+    "check:rules": "npx --yes eslint-config-prettier eslint.config.ts",
+    "eslint:inspect": "npx --yes @eslint/config-inspector",
+    "\n# ---------------- TESTING  ---------------- #": "",
+    "e2e": "npx --yes vitest run --config vitest.config.e2e.ts",
+    "mutation": "npx --yes stryker run",
+    "test:all": "npm run test && npm run e2e && npm run mutation",
     "typecheck": "tsc --noEmit",
-    "typecheck:spec": "tsc -p tsconfig.spec.json --noEmit",
-    "validate": "npm run lint && npm run typecheck && npm run typecheck:spec && npm run test && npm run build && npm run pack",
-    "pretest": "npm run build",
-    "\n\t• --------------- unit --------------- •": "",
-    "e2e": "npx --yes vitest run --config vitest.config.e2e.ts --coverage.enabled=false",
-    "tdd:notify": "npm run tdd -- --notify",
-    "tdd": "npx --yes vitest run --watch --silent=true --coverage.enabled=false",
-    "test": "npm run unit && npm run e2e",
-    "unit": "npx --yes vitest run"
+    "validate": "npm run lint && npm run typecheck && npm run build --if-present && npm run test:all && npm run pack --if-present",
+    "\n    • -------------- unit -------------- •": "",
+    "test": "npx --yes vitest run",
+    "tdd": "npm run test -- --watch --silent=true --coverage.enabled=false"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "commitlint",
     "conventional-commits",
     "emoji"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/parloti/commitlint-config-emoji.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@commitlint/types": "^20.5.0"
-  },
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/cz-commitlint": "^20.5.1",
-    "@commitlint/lint": "^20.5.0",
-    "@commitlint/load": "^20.5.0",
-    "@types/node": "^25.6.0",
-    "@vitest/coverage-v8": "^4.1.4",
-    "chalk": "^5.6.2",
+    "@codeperfect/commitlint-config-emoji": "^1.0.0",
+    "@codeperfect/eslint-config": "^1.15.0",
+    "@codeperfect/eslint-plugin": "^2.7.0",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/cz-commitlint": "^21.2.2",
+    "@commitlint/lint": "^21.2.2",
+    "@commitlint/load": "^21.2.2",
+    "@commitlint/types": "^21.2.0",
+    "@stryker-mutator/core": "^10.0.0",
+    "@stryker-mutator/typescript-checker": "^10.0.0",
+    "@stryker-mutator/vitest-runner": "^10.0.0",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^22.20.2",
+    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/eslint-plugin": "^1.6.27",
+    "chalk": "^6.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-boundaries": "^7.2.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "semantic-release": "^25.0.3",
-    "tsc-alias": "^1.8.16",
-    "typescript": "^6.0.2",
-    "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.4"
+    "jiti": "^2.7.0",
+    "lint-staged": "^17.5.1",
+    "lodash-es": "^4.18.1",
+    "patch-package": "^8.0.1",
+    "semantic-release": "^25.0.9",
+    "tsc-alias": "^1.9.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  },
+  "peerDependencies": {
+    "@commitlint/types": "^21.2.0"
   }
 }

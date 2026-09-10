@@ -2,78 +2,119 @@ import type { Commit } from "conventional-commits-parser";
 
 import { describe, expect, it } from "vitest";
 
-import {
-  emojiTypeMatchPlugin,
-  emojiTypeMatchRule,
-} from "./emoji-type-match-plugin";
+import { emojiTypeMatchPlugin } from "./emoji-type-match-plugin";
+
+const emojiTypeMatchRule = emojiTypeMatchPlugin.rules["emoji-type-match"];
 
 const createParsedCommit = (
-  fields: Partial<Record<string, string | null>>,
+  fields: Partial<Record<string, string | undefined>>,
 ): Commit =>
   ({
-    body: null,
-    footer: null,
-    header: null,
+    body: undefined,
+    footer: undefined,
+    header: undefined,
     mentions: [],
-    merge: null,
+    merge: undefined,
     notes: [],
     references: [],
-    revert: null,
+    revert: undefined,
     ...fields,
   }) as unknown as Commit;
 
 describe("emojiTypeMatchRule", () => {
   it("returns success when the emoji is missing", () => {
-    expect(emojiTypeMatchRule(createParsedCommit({ type: "feat" }))).toEqual([
-      true,
-    ]);
+    // Arrange
+    const commit = createParsedCommit({ type: "feat" });
+
+    // Act
+    const actualResult = emojiTypeMatchRule(commit);
+
+    // Assert
+    expect(actualResult).toStrictEqual([true]);
   });
 
   it("returns success when the type is missing", () => {
-    expect(emojiTypeMatchRule(createParsedCommit({ emoji: "✨" }))).toEqual([
-      true,
-    ]);
+    // Arrange
+    const commit = createParsedCommit({ emoji: "✨" });
+
+    // Act
+    const actualResult = emojiTypeMatchRule(commit);
+
+    // Assert
+    expect(actualResult).toStrictEqual([true]);
   });
 
   it("returns success when the type is outside the conventional enum", () => {
-    expect(
-      emojiTypeMatchRule(createParsedCommit({ emoji: "✨", type: "custom" })),
-    ).toEqual([true]);
+    // Arrange
+    const commit = createParsedCommit({ emoji: "✨", type: "custom" });
+
+    // Act
+    const actualResult = emojiTypeMatchRule(commit);
+
+    // Assert
+    expect(actualResult).toStrictEqual([true]);
   });
 
   it("returns success when the emoji matches the type", () => {
-    expect(
-      emojiTypeMatchRule(createParsedCommit({ emoji: "✨", type: "feat" })),
-    ).toEqual([true]);
+    // Arrange
+    const commit = createParsedCommit({ emoji: "✨", type: "feat" });
+
+    // Act
+    const actualResult = emojiTypeMatchRule(commit);
+
+    // Assert
+    expect(actualResult).toStrictEqual([true]);
   });
 
   it("returns a deterministic failure when the emoji does not match the type", () => {
-    expect(
-      emojiTypeMatchRule(createParsedCommit({ emoji: "✨", type: "fix" })),
-    ).toEqual([false, 'emoji "✨" must match type "fix" using "🐛"']);
+    // Arrange
+    const commit = createParsedCommit({ emoji: "✨", type: "fix" });
+
+    // Act
+    const actualResult = emojiTypeMatchRule(commit);
+
+    // Assert
+    expect(actualResult).toStrictEqual([
+      false,
+      'emoji "✨" must match type "fix" using "🐛"',
+    ]);
   });
 
-  it("supports the inverted never condition", () => {
-    expect(
-      emojiTypeMatchRule(
-        createParsedCommit({ emoji: "✨", type: "fix" }),
-        "never",
-      ),
-    ).toEqual([true]);
+  it("supports the inverted never condition when the emoji matches the type", () => {
+    // Arrange
+    const commit = createParsedCommit({ emoji: "✨", type: "fix" });
 
-    expect(
-      emojiTypeMatchRule(
-        createParsedCommit({ emoji: "✨", type: "feat" }),
-        "never",
-      ),
-    ).toEqual([false, 'emoji "✨" must match type "feat" using "✨"']);
+    // Act
+    const actualResult = emojiTypeMatchRule(commit, "never");
+
+    // Assert
+    expect(actualResult).toStrictEqual([true]);
+  });
+
+  it("supports the inverted never condition when the emoji does not match", () => {
+    // Arrange
+    const commit = createParsedCommit({ emoji: "✨", type: "feat" });
+
+    // Act
+    const actualResult = emojiTypeMatchRule(commit, "never");
+
+    // Assert
+    expect(actualResult).toStrictEqual([
+      false,
+      'emoji "✨" must match type "feat" using "✨"',
+    ]);
   });
 });
 
 describe("emojiTypeMatchPlugin", () => {
   it("exposes the emoji-type-match rule", () => {
-    expect(emojiTypeMatchPlugin.rules["emoji-type-match"]).toBe(
-      emojiTypeMatchRule,
-    );
+    // Arrange
+    const commit = createParsedCommit({});
+
+    // Act
+    const actualResult = emojiTypeMatchPlugin.rules["emoji-type-match"](commit);
+
+    // Assert
+    expect(actualResult).toStrictEqual([true]);
   });
 });

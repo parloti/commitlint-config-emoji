@@ -1,24 +1,47 @@
 import { describe, expect, it } from "vitest";
 
-import { validCommitMessages } from "../fixtures/valid-commit-messages";
-import { lintCommitMessage } from "../support/commitlint-harness";
+import type { ValidCommitMessageCase } from "../fixtures";
+
+import { validCommitMessages } from "../fixtures";
+import { lintCommitMessage } from "../support";
+
+const hasExpectedHeaderLength = (
+  fixture: ValidCommitMessageCase,
+): fixture is ValidCommitMessageCase & { expectedHeaderLength: number } =>
+  fixture.expectedHeaderLength !== undefined;
 
 describe("accepted commit messages", () => {
-  it.each(validCommitMessages)(
-    "$name",
+  it.each(validCommitMessages.filter(hasExpectedHeaderLength))(
+    "$name (header length)",
     async ({ expectedHeaderLength, message }) => {
       // Arrange
-      if (expectedHeaderLength !== undefined) {
-        expect(message.length).toBe(expectedHeaderLength);
-      }
+      const commitMessage = message;
 
       // Act
-      const result = await lintCommitMessage(message);
+      const result = await lintCommitMessage(commitMessage);
 
       // Assert
+      expect(commitMessage).toHaveLength(expectedHeaderLength);
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
       expect(result.warnings).toHaveLength(0);
     },
   );
+
+  it.each(
+    validCommitMessages.filter(
+      ({ expectedHeaderLength }) => expectedHeaderLength === undefined,
+    ),
+  )("$name", async ({ message }) => {
+    // Arrange
+    const commitMessage = message;
+
+    // Act
+    const result = await lintCommitMessage(commitMessage);
+
+    // Assert
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+    expect(result.warnings).toHaveLength(0);
+  });
 });
