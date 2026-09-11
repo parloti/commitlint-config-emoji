@@ -1,7 +1,21 @@
-import _default from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [_default()],
-  test: { include: ["tests/**/*.e2e.ts"], name: "e2e" },
+  test: {
+    clearMocks: true,
+    coverage: {
+      enabled: true,
+      exclude: ["**/index.ts", "**/*.spec.ts"],
+      include: ["src/**/*.ts"],
+      thresholds: { branches: 15, functions: 15, lines: 15, statements: 15 },
+    },
+    include: ["tests/e2e/**/*.e2e.ts"],
+    mockReset: true,
+    name: "commitlint-config-emoji-e2e",
+    restoreMocks: true,
+    setupFiles: ["vitest.setup.ts"],
+    testTimeout: 30_000,
+    unstubEnvs: true,
+    unstubGlobals: true,
+  },
 });

@@ -1,8 +1,5 @@
 import type { UserConfig } from "@commitlint/types";
 
-import packageConfig from "./src/index.js";
+import config from "./src";
 
-/** Load the source config locally so commitlint works before dist exists. */
-const config: UserConfig = packageConfig;
-
-export default config;
+export default config satisfies UserConfig;
